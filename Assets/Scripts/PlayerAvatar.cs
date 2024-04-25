@@ -10,14 +10,23 @@ public class PlayerAvatar : MonoBehaviour
     {
         _parent = GetComponentInParent<Player>();
     }
+    public void Attack()
+    {
+        _parent.Attack();
+    }
+
+    public void AreaAttack()
+    {
+        _parent.AreaAttack();
+    }
 
     public void Jump()
     {
         _parent.Jump();
     }
 
-    public void Attack()
+    public void SetDanceState(int state)
     {
-        _parent.Attack();
+        _parent.SetDanceState(state);
     }
 }
