@@ -1,8 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.AI.Navigation;
 using UnityEngine;
-using UnityEngine.AI;
+using Unity.AI.Navigation;
 
 public class Platform : MonoBehaviour
 {
@@ -59,8 +58,8 @@ public class Platform : MonoBehaviour
         _material.color = new Color(_ogColor.r, _ogColor.g, _ogColor.b, 0f);
         _collider.enabled = false;
 
-        //_modifier.enabled = false;
-        //_surface.BuildNavMesh();
+        _modifier.enabled = false;
+        _surface.BuildNavMesh();
 
         yield return new WaitForSeconds(_intermission);
 
@@ -76,8 +75,8 @@ public class Platform : MonoBehaviour
         _material.color = new Color(_ogColor.r, _ogColor.g, _ogColor.b, 1f);
         _collider.enabled = true;
 
-        //_modifier.enabled = true;
-        //_surface.BuildNavMesh();
+        _modifier.enabled = true;
+        _surface.BuildNavMesh();
 
         _isActive = !_isActive;
     }
