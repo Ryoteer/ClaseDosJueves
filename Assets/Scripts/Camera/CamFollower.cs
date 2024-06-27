@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CamFollower : MonoBehaviour
+public class CamFollower : MonoBehaviour, IUpdate
 {
     [Header("Components")]
     [Tooltip("Selects which Game Object the camera will track.")]
@@ -12,10 +12,16 @@ public class CamFollower : MonoBehaviour
 
     private void Start()
     {
+        UpdateManager.Instance.Add(this);
+
         _offset = transform.position;
     }
 
-    private void LateUpdate()
+    public void ArtificalUpdate() { }
+
+    public void ArtificalFixedUpdate() { }
+
+    public void ArtificalLateUpdate()
     {
         _finalCamPos = _target.position + _offset;
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Enemy : MonoBehaviour
+public class Enemy : MonoBehaviour, IUpdate
 {
     [Header("<color=red>AI</color>")]
     [SerializeField] private NavMeshAgent _agent;
@@ -32,33 +32,22 @@ public class Enemy : MonoBehaviour
 
     private void Start()
     {
+        UpdateManager.Instance.Add(this);
+
         _actualDestination = GetNode(_actualDestination);
 
         _agent.SetDestination(_actualDestination.position);
     }
 
-    public void TakeDamage(int dmg)
-    {
-        _actualHP -= dmg;
+    public void ArtificalUpdate() { }
 
-        if(_actualHP <= 0)
-        {
-            print($"Oh my God, they killed Kenny!");
-            Destroy(gameObject);
-        }
-        else
-        {
-            print($"<color=red>{name}</color>: Recibí <color=black>{dmg}</color> puntos de daño.");
-        }
-    }
-
-    private void FixedUpdate()
+    public void ArtificalFixedUpdate()
     {
-        if((_target.position - transform.position).sqrMagnitude <= Mathf.Pow(_chaseDistance, 2))
+        if ((_target.position - transform.position).sqrMagnitude <= Mathf.Pow(_chaseDistance, 2))
         {
             _agent.SetDestination(_target.position);
 
-            if(((_target.position - transform.position).sqrMagnitude <= Mathf.Pow(_attackDistance, 2)))
+            if (((_target.position - transform.position).sqrMagnitude <= Mathf.Pow(_attackDistance, 2)))
             {
                 _agent.isStopped = true;
 
@@ -83,6 +72,23 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    public void ArtificalLateUpdate() { }
+
+    public void TakeDamage(int dmg)
+    {
+        _actualHP -= dmg;
+
+        if(_actualHP <= 0)
+        {
+            print($"Oh my God, they killed Kenny!");
+            Destroy(gameObject);
+        }
+        else
+        {
+            print($"<color=red>{name}</color>: Recibí <color=black>{dmg}</color> puntos de daño.");
+        }
+    }
+
     private Transform GetNode(Transform actualNode)
     {
         Transform newNode = null;
@@ -94,5 +100,5 @@ public class Enemy : MonoBehaviour
         while (newNode == actualNode);
 
         return newNode;
-    }
+    }    
 }

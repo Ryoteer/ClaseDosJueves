@@ -25,6 +25,16 @@ public class PlayerAvatar : MonoBehaviour
         _parent.Jump();
     }
 
+    public void PlayStepClip()
+    {
+        _parent.PlayStepClip();
+    }
+
+    public void PlayAttackClip(int index)
+    {
+        _parent.PlayAttackClip(index);
+    }
+
     public void SetDanceState(int state)
     {
         _parent.SetDanceState(state);

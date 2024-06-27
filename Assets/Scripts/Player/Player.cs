@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEditor.Animations;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
-public class Player : MonoBehaviour
+[RequireComponent(typeof(Rigidbody), typeof(AudioSource))]
+public class Player : MonoBehaviour, IUpdate
 {
     [Header("<color=orange>Animation</color>")]
     [SerializeField] private Animator _animator;
@@ -16,6 +16,10 @@ public class Player : MonoBehaviour
     [SerializeField] private string _isMovingName = "isMoving";
     [SerializeField] private string _isGroundedName = "isGrounded";
     [SerializeField] private string _onDanceName = "onDance";
+
+    [Header("<color=orange>Audio</color>")]
+    [SerializeField] private AudioClip[] _stepClips;
+    [SerializeField] private AudioClip[] _attackClips;
 
     [Header("<color=orange>Inputs</color>")]
     [SerializeField] private KeyCode _attackKey = KeyCode.Mouse0;
@@ -45,6 +49,7 @@ public class Player : MonoBehaviour
     private float _xAxis, _zAxis;
     private Vector3 _dir = new(), _transformOffset = new(), _dirOffset = new(), _dirCheck = new();
 
+    private AudioSource _source;
     private Rigidbody _rb;
 
     private Ray _attackRay, _groundRay, _wallRay;
@@ -56,17 +61,21 @@ public class Player : MonoBehaviour
 
         _rb.constraints = RigidbodyConstraints.FreezeRotation;
         _rb.angularDrag = 1f;
+
+        _source = GetComponent<AudioSource>();
     }
 
     private void Start()
     {
+        UpdateManager.Instance.Add(this);
+
         if (!_animator)
         {
             _animator = GetComponentInChildren<Animator>();
         }
     }
 
-    private void Update()
+    public void ArtificalUpdate()
     {
         if (_isDancing) return;
 
@@ -98,15 +107,17 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void FixedUpdate()
+    public void ArtificalFixedUpdate()
     {
         if (_isDancing) return;
 
-        if((_xAxis != 0 || _zAxis != 0) && !IsBlocked(_xAxis, _zAxis))
+        if ((_xAxis != 0 || _zAxis != 0) && !IsBlocked(_xAxis, _zAxis))
         {
             Movement(_xAxis, _zAxis);
         }
     }
+
+    public void ArtificalLateUpdate() { }
 
     public void Jump()
     {
@@ -137,6 +148,30 @@ public class Player : MonoBehaviour
                 enemy.TakeDamage(_dmg * 2);
             }
         }
+    }
+
+    public void PlayStepClip()
+    {
+        if (_source.isPlaying)
+        {
+            _source.Stop();
+        }
+
+        _source.clip = _stepClips[Random.Range(0, _stepClips.Length)];
+
+        _source.Play();
+    }
+
+    public void PlayAttackClip(int index)
+    {
+        if (_source.isPlaying)
+        {
+            _source.Stop();
+        }
+
+        _source.clip = _attackClips[index];
+
+        _source.Play();
     }
 
     private void Movement(float xAxis, float zAxis)
@@ -192,5 +227,5 @@ public class Player : MonoBehaviour
         Gizmos.color = Color.green;
         Gizmos.DrawRay(_attackRay);
         Gizmos.DrawWireSphere(transform.position, _areaAttackRadius);
-    }
+    }    
 }
